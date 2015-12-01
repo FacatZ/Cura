@@ -62,30 +62,66 @@ class SceneView(openglGui.glGuiPanel):
 		self._projMatrix = None
 		self.tempMatrix = None
 
-		self.openFileButton      = openglGui.glButton(self, 4, _("Load"), (0,0), self.showLoadModel)
-		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1,0), self.OnPrintButton)
+		#test
+
+		self.openFileButton      = openglGui.glButton(self, 4, _("Load"), (0+100,0), self.showLoadModel)
+		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1+100,0), self.OnPrintButton)
 		self.printButton.setDisabled(True)
 
+		#test radiobutton -> frame
+		# self.radioForm = openglGui.glFrame(self, (0, -3))
+		# openglGui.glGuiLayoutGrid(self.radioForm)
+		# group = []
+		# self.rotateToolButton = openglGui.glRadioButton(self.radioForm, 8, _("Rotate"), (0,1), group, self.OnToolSelect)
+		# self.scaleToolButton  = openglGui.glRadioButton(self.radioForm, 9, _("Scale"), (0,2), group, self.OnToolSelect)
+		# self.mirrorToolButton  = openglGui.glRadioButton(self.radioForm, 10, _("Mirror"), (0,3), group, self.OnToolSelect)
 		group = []
-		self.rotateToolButton = openglGui.glRadioButton(self, 8, _("Rotate"), (0,-1), group, self.OnToolSelect)
-		self.scaleToolButton  = openglGui.glRadioButton(self, 9, _("Scale"), (1,-1), group, self.OnToolSelect)
-		self.mirrorToolButton  = openglGui.glRadioButton(self, 10, _("Mirror"), (2,-1), group, self.OnToolSelect)
+		self.rotateToolButton = openglGui.glRadioButton(self, 8, _("Rotate"), (0+12,-1-3.5), group, self.OnToolSelect)
+		self.scaleToolButton  = openglGui.glRadioButton(self, 9, _("Scale"), (0+12,-1-2.5), group, self.OnToolSelect)
+		self.mirrorToolButton  = openglGui.glRadioButton(self, 10, _("Mirror"), (0+12,-1-1.5), group, self.OnToolSelect)
 
-		self.resetRotationButton = openglGui.glButton(self, 12, _("Reset"), (0,-2), self.OnRotateReset)
-		self.layFlatButton       = openglGui.glButton(self, 16, _("Lay flat"), (0,-3), self.OnLayFlat)
+		self.resetRotationButton = openglGui.glButton(self, 12, _("Reset"), (0+11,-2-1.5), self.OnRotateReset)
+		self.layFlatButton       = openglGui.glButton(self, 16, _("Lay flat"), (0+11,-3-1.5), self.OnLayFlat)
 
-		self.resetScaleButton    = openglGui.glButton(self, 13, _("Reset"), (1,-2), self.OnScaleReset)
-		self.scaleMaxButton      = openglGui.glButton(self, 17, _("To max"), (1,-3), self.OnScaleMax)
+		self.resetScaleButton    = openglGui.glButton(self, 13, _("Reset"), (1+10,-2-0.5), self.OnScaleReset)
+		self.scaleMaxButton      = openglGui.glButton(self, 17, _("To max"), (1+10,-3-0.5), self.OnScaleMax)
 
-		self.mirrorXButton       = openglGui.glButton(self, 14, _("Mirror X"), (2,-2), lambda button: self.OnMirror(0))
-		self.mirrorYButton       = openglGui.glButton(self, 18, _("Mirror Y"), (2,-3), lambda button: self.OnMirror(1))
-		self.mirrorZButton       = openglGui.glButton(self, 22, _("Mirror Z"), (2,-4), lambda button: self.OnMirror(2))
+		self.mirrorXButton       = openglGui.glButton(self, 14, _("Mirror X"), (2+9,-2-0.5), lambda button: self.OnMirror(0))
+		self.mirrorYButton       = openglGui.glButton(self, 18, _("Mirror Y"), (2+9,-3-0.5), lambda button: self.OnMirror(1))
+		self.mirrorZButton       = openglGui.glButton(self, 22, _("Mirror Z"), (2+9,-4-0.5), lambda button: self.OnMirror(2))
 
 		self.rotateToolButton.setExpandArrow(True)
 		self.scaleToolButton.setExpandArrow(True)
 		self.mirrorToolButton.setExpandArrow(True)
 
-		self.scaleForm = openglGui.glFrame(self, (2, -2))
+		# #add sidebar
+		self.button1 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -6), [], self.showLoadModel)
+		self.button2 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -5), [], self.showLoadModel)
+		self.button3 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -3), [], self.showLoadModel)
+		self.button4 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -2), [], self.showLoadModel)
+		#orientation button & frame
+		self.orientationButton = openglGui.glRadioButton(self, 8, _("orientation"), (0, -4), [], self.OnToolSelect)
+		self.orientationFrame = openglGui.glFrame(self, (1.5, -2))
+		openglGui.glGuiLayoutGrid(self.orientationFrame)
+		openglGui.glLabel(self.orientationFrame, _("Orientation"), (0, 0))
+		openglGui.glLabel(self.orientationFrame, _("X"), (0, 1))
+		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 1), lambda value: self.OnScaleEntry(value, 0))
+		openglGui.glLabel(self.orientationFrame, _("Y"), (0, 2))
+		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 2), lambda value: self.OnScaleEntry(value, 0))
+		openglGui.glLabel(self.orientationFrame, _("Z"), (0, 3))
+		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 3), lambda value: self.OnScaleEntry(value, 0))
+		openglGui.glLabel(self.orientationFrame, _("lock"), (2, 1))
+		
+		self.subbutton1 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (0,4), self.showLoadModel)
+		self.subbutton2 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (1,4), self.showLoadModel)
+		self.subbutton3 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (2,4), self.showLoadModel)
+		self.subbutton4 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (0,5), self.showLoadModel)
+		self.subbutton5 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (1,5), self.showLoadModel)
+		self.subbutton6 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (2,5), self.showLoadModel)
+		#unknown button
+		# #end
+
+		self.scaleForm = openglGui.glFrame(self, (2+6, -2-0.5))
 		openglGui.glGuiLayoutGrid(self.scaleForm)
 		openglGui.glLabel(self.scaleForm, _("Scale X"), (0,0))
 		self.scaleXctrl = openglGui.glNumberCtrl(self.scaleForm, '1.0', (1,0), lambda value: self.OnScaleEntry(value, 0))
@@ -104,7 +140,7 @@ class SceneView(openglGui.glGuiPanel):
 
 		self.viewSelection = openglGui.glComboButton(self, _("View mode"), [7,19,11,15,23], [_("Normal"), _("Overhang"), _("Transparent"), _("X-Ray"), _("Layers")], (-1,0), self.OnViewChange)
 
-		self.youMagineButton = openglGui.glButton(self, 26, _("Share on YouMagine"), (2,0), lambda button: youmagineGui.youmagineManager(self.GetTopLevelParent(), self._scene))
+		self.youMagineButton = openglGui.glButton(self, 26, _("Share on YouMagine"), (2+100,0), lambda button: youmagineGui.youmagineManager(self.GetTopLevelParent(), self._scene))
 		self.youMagineButton.setDisabled(True)
 
 		self.notification = openglGui.glNotification(self, (0, 0))
@@ -276,7 +312,7 @@ class SceneView(openglGui.glGuiPanel):
 				else:
 					drive = drives[0]
 				filename = self._scene._objectList[0].getName() + profile.getGCodeExtension()
-				
+
 				#check if the file is part of the root folder. If so, create folders on sd card to get the same folder hierarchy.
 				repDir = profile.getPreference("sdcard_rootfolder")
 				try:
@@ -402,6 +438,8 @@ class SceneView(openglGui.glGuiPanel):
 			self.tool = previewTools.toolScale(self)
 		elif self.mirrorToolButton.getSelected():
 			self.tool = previewTools.toolNone(self)
+		elif self.orientationButton.getSelected():
+			print 'orient Button selected'
 		else:
 			self.tool = previewTools.toolNone(self)
 		self.resetRotationButton.setHidden(not self.rotateToolButton.getSelected())
@@ -412,6 +450,8 @@ class SceneView(openglGui.glGuiPanel):
 		self.mirrorXButton.setHidden(not self.mirrorToolButton.getSelected())
 		self.mirrorYButton.setHidden(not self.mirrorToolButton.getSelected())
 		self.mirrorZButton.setHidden(not self.mirrorToolButton.getSelected())
+		#additional orientation frame
+		self.orientationFrame.setHidden(not self.orientationButton.getSelected())
 
 	def updateToolButtons(self):
 		if self._selectedObj is None:

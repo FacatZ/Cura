@@ -197,3 +197,8 @@ if platform.system() == "Darwin": #Mac magic. Dragons live here. THis sets full 
 else:
 	def setFullScreenCapable(frame):
 		pass
+
+
+if __name__ == '__main__':
+	app = CuraApp('1.txt')
+	app.MainLoop()

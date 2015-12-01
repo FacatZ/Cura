@@ -5,7 +5,8 @@ import os
 import webbrowser
 import sys
 
-
+#import custom panel
+from Cura.gui import customModel
 from Cura.gui import configBase
 from Cura.gui import expertConfig
 from Cura.gui import alterationPanel
@@ -175,6 +176,12 @@ class mainWindow(wx.Frame):
 		i = expertMenu.Append(-1, _("Switch to full settings..."), kind=wx.ITEM_RADIO)
 		self.switchToNormalMenuItem = i
 		self.Bind(wx.EVT_MENU, self.OnNormalSwitch, i)
+		# expertMenu.AppendSeparator()
+
+		###add menu item to switch to custom panel
+		i = expertMenu.Append(-1, _("Switch to custom panel..."), kind=wx.ITEM_RADIO)
+		self.switchToCustomMenuItem = i
+		self.Bind(wx.EVT_MENU, self.OnCustomSwitch, i)
 		expertMenu.AppendSeparator()
 
 		i = expertMenu.Append(-1, _("Open expert settings...\tCTRL+E"))
@@ -213,10 +220,15 @@ class mainWindow(wx.Frame):
 		##Gui components##
 		self.simpleSettingsPanel = simpleMode.simpleModePanel(self.leftPane, self.scene.sceneUpdated)
 		self.normalSettingsPanel = normalSettingsPanel(self.leftPane, self.scene.sceneUpdated)
+		###Custom component###
+		self.customSettingPanel = customModel.customSettingPanel(self.leftPane)
 
 		self.leftSizer = wx.BoxSizer(wx.VERTICAL)
 		self.leftSizer.Add(self.simpleSettingsPanel, 1)
 		self.leftSizer.Add(self.normalSettingsPanel, 1, wx.EXPAND)
+		###add custom setting panel to left sizer
+		self.leftSizer.Add(self.customSettingPanel, 1)
+
 		self.leftPane.SetSizer(self.leftSizer)
 
 		#Main sizer, to position the preview window, buttons and tab control
@@ -237,6 +249,7 @@ class mainWindow(wx.Frame):
 
 		self.simpleSettingsPanel.Show(False)
 		self.normalSettingsPanel.Show(False)
+		self.customSettingPanel.Show(False)
 
 		# Set default window size & position
 		self.SetSize((wx.Display().GetClientArea().GetWidth()/2,wx.Display().GetClientArea().GetHeight()/2))
@@ -359,6 +372,13 @@ class mainWindow(wx.Frame):
 		self.normalSettingsPanel.Show(not isSimple)
 		self.simpleSettingsPanel.Show(isSimple)
 		self.leftPane.Layout()
+		###show custom
+		isCustom = profile.getPreference('startMode') == 'Custom'
+		if isCustom:
+			self.customSettingPanel.Show(True)
+			self.normalSettingsPanel.Show(False)
+			self.simpleSettingsPanel.Show(False)
+			self.leftPane.Layout()
 
 		for i in self.normalModeOnlyItems:
 			i.Enable(not isSimple)
@@ -569,6 +589,11 @@ class mainWindow(wx.Frame):
 			for k, v in self.simpleSettingsPanel.getSettingOverrides().items():
 				profile.putProfileSetting(k, v)
 			self.updateProfileToAllControls()
+		self.updateSliceMode()
+
+	#Custom callback
+	def OnCustomSwitch(self, e):
+		profile.putPreference('startMode', 'Custom')
 		self.updateSliceMode()
 
 	def OnDefaultMarlinFirmware(self, e):
