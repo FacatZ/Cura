@@ -76,19 +76,19 @@ class SceneView(openglGui.glGuiPanel):
 		# self.scaleToolButton  = openglGui.glRadioButton(self.radioForm, 9, _("Scale"), (0,2), group, self.OnToolSelect)
 		# self.mirrorToolButton  = openglGui.glRadioButton(self.radioForm, 10, _("Mirror"), (0,3), group, self.OnToolSelect)
 		group = []
-		self.rotateToolButton = openglGui.glRadioButton(self, 8, _("Rotate"), (0+12,-1-3.5), group, self.OnToolSelect)
-		self.scaleToolButton  = openglGui.glRadioButton(self, 9, _("Scale"), (0+12,-1-2.5), group, self.OnToolSelect)
-		self.mirrorToolButton  = openglGui.glRadioButton(self, 10, _("Mirror"), (0+12,-1-1.5), group, self.OnToolSelect)
+		self.rotateToolButton = openglGui.glRadioButton(self, 8, _("Rotate"), (0-1,-1-3.5), group, self.OnToolSelect)
+		self.scaleToolButton  = openglGui.glRadioButton(self, 9, _("Scale"), (0-1,-1-2.5), group, self.OnToolSelect)
+		self.mirrorToolButton  = openglGui.glRadioButton(self, 10, _("Mirror"), (0-1,-1-1.5), group, self.OnToolSelect)
 
-		self.resetRotationButton = openglGui.glButton(self, 12, _("Reset"), (0+11,-2-1.5), self.OnRotateReset)
-		self.layFlatButton       = openglGui.glButton(self, 16, _("Lay flat"), (0+11,-3-1.5), self.OnLayFlat)
+		self.resetRotationButton = openglGui.glButton(self, 12, _("Reset"), (0-2,-2-1.5), self.OnRotateReset)
+		self.layFlatButton       = openglGui.glButton(self, 16, _("Lay flat"), (0-2,-3-1.5), self.OnLayFlat)
 
-		self.resetScaleButton    = openglGui.glButton(self, 13, _("Reset"), (1+10,-2-0.5), self.OnScaleReset)
-		self.scaleMaxButton      = openglGui.glButton(self, 17, _("To max"), (1+10,-3-0.5), self.OnScaleMax)
+		self.resetScaleButton    = openglGui.glButton(self, 13, _("Reset"), (1-3,-2-0.5), self.OnScaleReset)
+		self.scaleMaxButton      = openglGui.glButton(self, 17, _("To max"), (1-3,-3-0.5), self.OnScaleMax)
 
-		self.mirrorXButton       = openglGui.glButton(self, 14, _("Mirror X"), (2+9,-2-0.5), lambda button: self.OnMirror(0))
-		self.mirrorYButton       = openglGui.glButton(self, 18, _("Mirror Y"), (2+9,-3-0.5), lambda button: self.OnMirror(1))
-		self.mirrorZButton       = openglGui.glButton(self, 22, _("Mirror Z"), (2+9,-4-0.5), lambda button: self.OnMirror(2))
+		self.mirrorXButton       = openglGui.glButton(self, 14, _("Mirror X"), (2-4,-2-0.5), lambda button: self.OnMirror(0))
+		self.mirrorYButton       = openglGui.glButton(self, 18, _("Mirror Y"), (2-4,-3-0.5), lambda button: self.OnMirror(1))
+		self.mirrorZButton       = openglGui.glButton(self, 22, _("Mirror Z"), (2-4,-4-0.5), lambda button: self.OnMirror(2))
 
 		self.rotateToolButton.setExpandArrow(True)
 		self.scaleToolButton.setExpandArrow(True)
@@ -121,7 +121,7 @@ class SceneView(openglGui.glGuiPanel):
 		#unknown button
 		# #end
 
-		self.scaleForm = openglGui.glFrame(self, (2+6, -2-0.5))
+		self.scaleForm = openglGui.glFrame(self, (2-7, -2-0.5))
 		openglGui.glGuiLayoutGrid(self.scaleForm)
 		openglGui.glLabel(self.scaleForm, _("Scale X"), (0,0))
 		self.scaleXctrl = openglGui.glNumberCtrl(self.scaleForm, '1.0', (1,0), lambda value: self.OnScaleEntry(value, 0))

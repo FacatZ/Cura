@@ -83,147 +83,191 @@ class simpleModePanel(wx.Panel):
 		sizer = wx.GridBagSizer()
 		self.SetSizer(sizer)
 
+		#print type panel
 		productTypeItems = [u'导入标准', u'导入非标准']
+		callbackList = [None, None]
 		productTypePanel = wx.Panel(self)
-		sb = wx.StaticBox(productTypePanel, label='产品类型')
-		boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
-		for item in productTypeItems:
-			button = wx.Button(productTypePanel, -1, item)
-			boxsizer.Add(button)
+		boxsizer = self.createProductTypeSizer(productTypePanel, productTypeItems, callbackList)
 		productTypePanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		productTypePanel.GetSizer().Add(boxsizer)
+		productTypePanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
 		sizer.Add(productTypePanel, (0, 0), flag=wx.EXPAND)
 
 		#print model
 		printModelPanel = wx.Panel(self)
-		sb = wx.StaticBox(printModelPanel, label='打印模式')
-		boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
-		##add panel
-		nb = wx.Notebook(printModelPanel)
-		expertModelPanel = wx.Panel(nb)
-		###add components to expert model panel
-		radioNames = '高精度 中精度 低精度'.split()
-		# subsb = wx.StaticBox(expertModelPanel, label='精度设置')
-		subboxsizer = wx.BoxSizer(wx.VERTICAL)
-		subboxsizer.Add(wx.RadioBox(expertModelPanel, -1, '精度设置', choices=radioNames, majorDimension=3))
-		###支撑设置
-		subsb = wx.StaticBox(expertModelPanel, label='支撑设置')
-		subboxsizer2 = wx.StaticBoxSizer(subsb, wx.HORIZONTAL)
-		subst = wx.StaticText(expertModelPanel, -1, '支撑类型')
-		subboxsizer2.Add(subst, flag=wx.ALIGN_BOTTOM)
-		subboxsizer2.Add(wx.RadioBox(expertModelPanel, -1, '', choices='有 无'.split(), majorDimension=2))
-		subboxsizer.Add(subboxsizer2)
+		boxsizer = self.createPrintModelSizer(printModelPanel)
+		# sb = wx.StaticBox(printModelPanel, label='打印模式')
+		# boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
+		# ##add panel
+		# nb = wx.Notebook(printModelPanel)
+		# expertModelPanel = wx.Panel(nb)
+		# ###add components to expert model panel
+		# radioNames = '高精度 中精度 低精度'.split()
+		# # subsb = wx.StaticBox(expertModelPanel, label='精度设置')
+		# subboxsizer = wx.BoxSizer(wx.VERTICAL)
+		# subboxsizer.Add(wx.RadioBox(expertModelPanel, -1, '精度设置', choices=radioNames, majorDimension=3))
+		# ###支撑设置
+		# subsb = wx.StaticBox(expertModelPanel, label='支撑设置')
+		# subboxsizer2 = wx.StaticBoxSizer(subsb, wx.HORIZONTAL)
+		# subst = wx.StaticText(expertModelPanel, -1, '支撑类型')
+		# subboxsizer2.Add(subst, flag=wx.ALIGN_BOTTOM)
+		# subboxsizer2.Add(wx.RadioBox(expertModelPanel, -1, '', choices='有 无'.split(), majorDimension=2))
+		# subboxsizer.Add(subboxsizer2)
 
-		###填充设置
-		subboxsizer2 = wx.BoxSizer(wx.VERTICAL)
-		subsb = wx.StaticBox(expertModelPanel, label='填充设置')
-		subboxsizer3 = wx.StaticBoxSizer(subsb, wx.HORIZONTAL)
-		subst = wx.StaticText(expertModelPanel, -1, '填充密度(%)')
-		subboxsizer3.Add(subst)
-		tc = wx.TextCtrl(expertModelPanel, -1, '')
-		subboxsizer3.Add(tc)
-		subboxsizer2.Add(subboxsizer3)
-		self.density = 0
-		slider = wx.Slider(expertModelPanel, -1, 50, 1, 100, size=(150,-1), style=wx.SL_HORIZONTAL | wx.SL_AUTOTICKS | wx.SL_LABELS)
-		subboxsizer2.Add(slider)
+		# ###填充设置
+		# subboxsizer2 = wx.BoxSizer(wx.VERTICAL)
+		# subsb = wx.StaticBox(expertModelPanel, label='填充设置')
+		# subboxsizer3 = wx.StaticBoxSizer(subsb, wx.HORIZONTAL)
+		# subst = wx.StaticText(expertModelPanel, -1, '填充密度(%)')
+		# subboxsizer3.Add(subst)
+		# tc = wx.TextCtrl(expertModelPanel, -1, '')
+		# subboxsizer3.Add(tc)
+		# subboxsizer2.Add(subboxsizer3)
+		# self.density = 0
+		# slider = wx.Slider(expertModelPanel, -1, 50, 1, 100, size=(150,-1), style=wx.SL_HORIZONTAL | wx.SL_AUTOTICKS | wx.SL_LABELS)
+		# subboxsizer2.Add(slider)
 
-		subboxsizer.Add(subboxsizer2)
-		expertModelPanel.SetSizer(subboxsizer)
+		# subboxsizer.Add(subboxsizer2)
+		# expertModelPanel.SetSizer(subboxsizer)
 
-		simpleModelPanel = wx.Panel(nb)
-		nb.AddPage(expertModelPanel, '专家模式')
-		nb.AddPage(simpleModelPanel, '简单模式')
-		boxsizer.Add(nb)
+		# simpleModelPanel = wx.Panel(nb)
+		# nb.AddPage(expertModelPanel, '专家模式')
+		# nb.AddPage(simpleModelPanel, '简单模式')
+		# boxsizer.Add(nb)
 
 		printModelPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
 		printModelPanel.GetSizer().Add(boxsizer)
 		sizer.Add(printModelPanel, (1, 0), flag=wx.EXPAND)
 
+
+		#consumptive material setting panel 
 		consumptiveMaterialSettingPanel = wx.Panel(self)
 		sb = wx.StaticBox(consumptiveMaterialSettingPanel, label='耗材设置')
 		boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
 		st = wx.StaticText(consumptiveMaterialSettingPanel, label='耗材类型')
-		boxsizer.Add(st)
-		#change normal button to list button
+		boxsizer.Add(st, 1, flag=wx.EXPAND)
 		materialList = ['PLA', 'A', 'B', 'C']
 		cbb = wx.ComboBox(consumptiveMaterialSettingPanel, -1, 'PLA', size=(100, 25), choices=materialList, style=wx.CB_DROPDOWN)
-		boxsizer.Add(cbb)
+		boxsizer.Add(cbb, 1, flag=wx.EXPAND)
 		consumptiveMaterialSettingPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		consumptiveMaterialSettingPanel.GetSizer().Add(boxsizer)
+		consumptiveMaterialSettingPanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
 		sizer.Add(consumptiveMaterialSettingPanel, (2, 0), flag=wx.EXPAND)
 
+		#slice setting panel
 		sliceSettingPanel = wx.Panel(self)
 		sb = wx.StaticBox(sliceSettingPanel, label='切片')
 		boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
 		st = wx.StaticText(sliceSettingPanel, label='切片开始')
-		boxsizer.Add(st)
+		boxsizer.Add(st, 1, flag=wx.EXPAND)
 		button = wx.Button(sliceSettingPanel, -1, '开始')
-		boxsizer.Add(button)
+		boxsizer.Add(button, 1, flag=wx.EXPAND)
 		sliceSettingPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		sliceSettingPanel.GetSizer().Add(boxsizer)
+		sliceSettingPanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
 		sizer.Add(sliceSettingPanel, (3, 0), flag=wx.EXPAND)
 
+		#printer control panel
 		printerControlPanel = wx.Panel(self)
 		sb = wx.StaticBox(printerControlPanel, label='打印机控制')
 		boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
 		st = wx.StaticText(printerControlPanel, -1, '打开打印机控制')
-		boxsizer.Add(st)
+		boxsizer.Add(st, 1, flag=wx.EXPAND)
 		button = wx.Button(printerControlPanel, -1, '打开')
-		boxsizer.Add(button)
+		boxsizer.Add(button, 1, flag=wx.EXPAND)
 		printerControlPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		printerControlPanel.GetSizer().Add(boxsizer)
+		printerControlPanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
 		sizer.Add(printerControlPanel, (4, 0), flag=wx.EXPAND)
-		#additional panel
-		# testPanel = wx.Panel(self)
-		# sb = wx.StaticBox(testPanel, label='test')
-		# boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
-		# button = wx.Button(testPanel, -1, 'Hello')
-		# boxsizer.Add(button, 0, wx.ALL, 2)
-		# button = wx.Button(testPanel, -1, 'World')
-		# boxsizer.Add(button, 0, wx.ALL, 2)
-		# button = wx.Button(testPanel, -1, 'aha')
-		# boxsizer.Add(button, 0, wx.ALL, 2)
-		# testPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		# testPanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
-		# sizer.Add(testPanel, (4, 0), flag=wx.EXPAND)
 
-		# sb = wx.StaticBox(printTypePanel, label=_("Select a quickprint profile:"))
-		# boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
-		# for button in self._print_profile_options:
-		# 	boxsizer.Add(button)
-		# printTypePanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		# printTypePanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
-		# sizer.Add(printTypePanel, (0,0), flag=wx.EXPAND)
+	def createProductTypeSizer(self, parent, buttonNameList, callbackList):
+		sb = wx.StaticBox(parent, label='产品类型')
+		boxsizer = wx.StaticBoxSizer(sb, wx.HORIZONTAL)
+		for buttonName in buttonNameList:
+			button = wx.Button(parent, -1, buttonName)
+			boxsizer.Add(button, 1, flag=wx.EXPAND)
+		return boxsizer
 
-		# sb = wx.StaticBox(printMaterialPanel, label=_("Material:"))
-		# boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
-		# for button in self._print_material_options:
-		# 	boxsizer.Add(button)
-		# printMaterialPanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		# printMaterialPanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
-		# sizer.Add(printMaterialPanel, (1,0), flag=wx.EXPAND)
+	def createPrintModelSizer(self, parent):
+		sb = wx.StaticBox(parent, label='打印模式')
+		boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
 
-		# sb = wx.StaticBox(printNozzlePanel, label=_("Nozzle:"))
-		# boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
-		# for button in self._print_nozzle_options:
-		# 	boxsizer.Add(button)
-		# printNozzlePanel.SetSizer(wx.BoxSizer(wx.VERTICAL))
-		# printNozzlePanel.GetSizer().Add(boxsizer, flag=wx.EXPAND)
-		# sizer.Add(printNozzlePanel, (2,0), flag=wx.EXPAND)
+		nb = wx.Notebook(parent)
+		expertModelPanel = self.createExpertModelPanel(nb)
+		simpleModelPanel = self.createSimpleModelPanel(nb)
 
-		# sb = wx.StaticBox(self, label=_("Other:"))
-		# boxsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
-		# boxsizer.Add(self.printSupport)
-		# sizer.Add(boxsizer, (3,0), flag=wx.EXPAND)
+		nb.AddPage(expertModelPanel, '专家模式')
+		nb.AddPage(simpleModelPanel, '简单模式')
 
-		# for button in self._print_profile_options:
-		# 	button.Bind(wx.EVT_RADIOBUTTON, self._update)
-		# for button in self._print_material_options:
-		# 	button.Bind(wx.EVT_RADIOBUTTON, self._update)
-		# for button in self._print_nozzle_options:
-		# 	button.Bind(wx.EVT_RADIOBUTTON, self._update)
+		boxsizer.Add(nb, flag=wx.EXPAND)
+		return boxsizer
 
-		# self.printSupport.Bind(wx.EVT_CHECKBOX, self._update)
+	def createExpertModelPanel(self, notebook):
+		panel = wx.Panel(notebook)
+		boxsizer = wx.BoxSizer(wx.VERTICAL)
+
+		#精度设置
+		sb = wx.StaticBox(panel, label='精度设置')
+		sbsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
+		radioNames = '高精度 中精度 低精度'.split()
+		sbsizer.Add(wx.RadioBox(panel, -1, '精度设置', choices=radioNames, majorDimension=3), flag=wx.EXPAND)
+		boxsizer.Add(sbsizer, flag=wx.EXPAND)
+
+		#支撑设置
+		sb = wx.StaticBox(panel, label='支撑设置')
+		sbsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
+
+		sbboxsizer = wx.BoxSizer(wx.HORIZONTAL)
+
+		st = wx.StaticText(panel, -1, '支撑类型')
+		sbboxsizer.Add(st, 1, flag=wx.EXPAND)
+
+		for buttonName in '有 无'.split():
+			radioButton = wx.RadioButton(panel, -1, buttonName, style=wx.RB_GROUP if buttonName == '有' else 0)
+			sbboxsizer.Add(radioButton, 1, flag=wx.EXPAND)
+		sbsizer.Add(sbboxsizer, flag=wx.EXPAND)
+		boxsizer.Add(sbsizer, flag=wx.EXPAND)
+
+		#填充设置
+		sb = wx.StaticBox(panel, label='填充设置')
+		sbsizer = wx.StaticBoxSizer(sb, wx.VERTICAL)
+
+		sbboxsizer = wx.BoxSizer(wx.HORIZONTAL)
+		st = wx.StaticText(panel, -1, '填充密度（%）')
+		sbboxsizer.Add(st, 1, flag=wx.EXPAND)
+		initDensityValue = 50
+		tc = wx.TextCtrl(panel, -1, '', style=wx.TE_PROCESS_ENTER)
+		tc.SetValue(str(initDensityValue))
+		self.densityTextCtrl = tc
+		self.density = initDensityValue
+		sbboxsizer.Add(tc, 1, flag=wx.EXPAND)
+		sbsizer.Add(sbboxsizer, flag=wx.EXPAND)
+
+		slider = wx.Slider(panel, -1, initDensityValue, 1, 100, size=(-1,-1), style=wx.SL_HORIZONTAL | wx.SL_AUTOTICKS | wx.SL_LABELS)		
+		self.densitySlider = slider
+		sbsizer.Add(slider, flag=wx.EXPAND)
+		boxsizer.Add(sbsizer, flag=wx.EXPAND)
+
+		self.Bind(wx.EVT_SLIDER, self.OnDensitySlide, self.densitySlider)
+		self.Bind(wx.EVT_TEXT_ENTER, self.OnDensityEnter, self.densityTextCtrl)
+		panel.SetSizer(boxsizer)
+
+		return panel
+
+	def OnDensityEnter(self, event):
+		try:
+			value = self.densityTextCtrl.GetValue()
+			value = int(value)
+			self.densitySlider.SetValue(value)
+			self.density = value
+		except:
+			self.OnDensitySlide(event)
+
+	def OnDensitySlide(self, event):
+		value = self.densitySlider.GetValue()
+		self.densityTextCtrl.SetValue(str(value))
+		self.density = value
+
+	def createSimpleModelPanel(self, notebook):
+		panel = wx.Panel(notebook)
+
+		return panel
 
 	def _update(self, e):
 		pass
