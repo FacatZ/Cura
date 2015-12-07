@@ -169,20 +169,27 @@ class mainWindow(wx.Frame):
 		self.menubar.Append(self.machineMenu, _("Machine"))
 
 		expertMenu = wx.Menu()
-		i = expertMenu.Append(-1, _("Switch to quickprint..."), kind=wx.ITEM_RADIO)
+		self.ID_QUICKPRINT = wx.NewId()
+		i = expertMenu.Append(self.ID_QUICKPRINT, _("Switch to quickprint..."), kind=wx.ITEM_CHECK)
 		self.switchToQuickprintMenuItem = i
+		expertMenu.Check(self.ID_QUICKPRINT, False)
+		profile.putPreference('startMode', 'Normal')
 		self.Bind(wx.EVT_MENU, self.OnSimpleSwitch, i)
 
-		i = expertMenu.Append(-1, _("Switch to full settings..."), kind=wx.ITEM_RADIO)
-		self.switchToNormalMenuItem = i
-		self.Bind(wx.EVT_MENU, self.OnNormalSwitch, i)
+		# i = expertMenu.Append(-1, _("Switch to full settings..."), kind=wx.ITEM_RADIO)
+		# self.switchToNormalMenuItem = i
+		# self.Bind(wx.EVT_MENU, self.OnNormalSwitch, i)
+
+		# i = expertMenu.Append(-1, _("Display left panel"), kind=wx.ITEM_RADIO)
+		# self.displayleftpanelItem = i
+		# self.Bind(wx.EVT_MENU, self.OnDisplayLeftPanel, i)
 		# expertMenu.AppendSeparator()
 
 		###add menu item to switch to custom panel
-		i = expertMenu.Append(-1, _("Switch to custom panel..."), kind=wx.ITEM_RADIO)
-		self.switchToCustomMenuItem = i
-		self.Bind(wx.EVT_MENU, self.OnCustomSwitch, i)
-		expertMenu.AppendSeparator()
+		# i = expertMenu.Append(-1, _("Switch to custom panel..."), kind=wx.ITEM_RADIO)
+		# self.switchToCustomMenuItem = i
+		# self.Bind(wx.EVT_MENU, self.OnCustomSwitch, i)
+		# expertMenu.AppendSeparator()
 
 		i = expertMenu.Append(-1, _("Open expert settings...\tCTRL+E"))
 		self.normalModeOnlyItems.append(i)
@@ -282,7 +289,8 @@ class mainWindow(wx.Frame):
 		if self.normalSashPos < self.normalSettingsPanel.printPanel.GetBestSize()[0] + 5:
 			self.normalSashPos = self.normalSettingsPanel.printPanel.GetBestSize()[0] + 5
 
-		self.splitter.SplitVertically(self.leftPane, self.rightPane, self.normalSashPos)
+		# self.splitter.SplitVertically(self.leftPane, self.rightPane, self.normalSashPos)
+		self.splitter.Initialize(self.rightPane)
 
 		if wx.Display.GetFromPoint(self.GetPosition()) < 0:
 			self.Centre()
@@ -304,6 +312,10 @@ class mainWindow(wx.Frame):
 
 		if pluginCount > 1:
 			self.scene.notification.message("Warning: %i plugins from the previous session are still active." % pluginCount)
+
+
+	# def OnDisplayLeftPanel(self, evt):
+	# 	self.splitter.Unsplit(self.leftPane)
 
 	def onPluginUpdate(self,msg): #receives commands from the plugin thread
 		cmd = str(msg.data).split(";")
@@ -372,20 +384,13 @@ class mainWindow(wx.Frame):
 		self.normalSettingsPanel.Show(not isSimple)
 		self.simpleSettingsPanel.Show(isSimple)
 		self.leftPane.Layout()
-		###show custom
-		isCustom = profile.getPreference('startMode') == 'Custom'
-		if isCustom:
-			self.customSettingPanel.Show(True)
-			self.normalSettingsPanel.Show(False)
-			self.simpleSettingsPanel.Show(False)
-			self.leftPane.Layout()
 
 		for i in self.normalModeOnlyItems:
 			i.Enable(not isSimple)
-		if isSimple:
-			self.switchToQuickprintMenuItem.Check()
-		else:
-			self.switchToNormalMenuItem.Check()
+		# if isSimple:
+		# 	self.switchToQuickprintMenuItem.Check()
+		# else:
+		# 	self.switchToNormalMenuItem.Check()
 
 		# Set splitter sash position & size
 		if isSimple:
@@ -576,25 +581,30 @@ class mainWindow(wx.Frame):
 			self.updateProfileToAllControls()
 
 	def OnSimpleSwitch(self, e):
-		profile.putPreference('startMode', 'Simple')
+		if self.switchToQuickprintMenuItem.IsChecked():
+			profile.putPreference('startMode', 'Simple')
+			self.splitter.SplitVertically(self.leftPane, self.rightPane, self.normalSashPos)
+		else:
+			profile.putPreference('startMode', 'Normal')
+			self.splitter.Unsplit(self.leftPane)
 		self.updateSliceMode()
 
-	def OnNormalSwitch(self, e):
-		profile.putPreference('startMode', 'Normal')
-		dlg = wx.MessageDialog(self, _("Copy the settings from quickprint to your full settings?\n(This will overwrite any full setting modifications you have)"), _("Profile copy"), wx.YES_NO | wx.ICON_QUESTION)
-		result = dlg.ShowModal() == wx.ID_YES
-		dlg.Destroy()
-		if result:
-			profile.resetProfile()
-			for k, v in self.simpleSettingsPanel.getSettingOverrides().items():
-				profile.putProfileSetting(k, v)
-			self.updateProfileToAllControls()
-		self.updateSliceMode()
+	# def OnNormalSwitch(self, e):
+	# 	profile.putPreference('startMode', 'Normal')
+	# 	dlg = wx.MessageDialog(self, _("Copy the settings from quickprint to your full settings?\n(This will overwrite any full setting modifications you have)"), _("Profile copy"), wx.YES_NO | wx.ICON_QUESTION)
+	# 	result = dlg.ShowModal() == wx.ID_YES
+	# 	dlg.Destroy()
+	# 	if result:
+	# 		profile.resetProfile()
+	# 		for k, v in self.simpleSettingsPanel.getSettingOverrides().items():
+	# 			profile.putProfileSetting(k, v)
+	# 		self.updateProfileToAllControls()
+	# 	self.updateSliceMode()
 
-	#Custom callback
-	def OnCustomSwitch(self, e):
-		profile.putPreference('startMode', 'Custom')
-		self.updateSliceMode()
+	# #Custom callback
+	# def OnCustomSwitch(self, e):
+	# 	profile.putPreference('startMode', 'Custom')
+	# 	self.updateSliceMode()
 
 	def OnDefaultMarlinFirmware(self, e):
 		firmwareInstall.InstallFirmware(self)

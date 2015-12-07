@@ -62,19 +62,11 @@ class SceneView(openglGui.glGuiPanel):
 		self._projMatrix = None
 		self.tempMatrix = None
 
-		#test
 
 		self.openFileButton      = openglGui.glButton(self, 4, _("Load"), (0+100,0), self.showLoadModel)
 		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1+100,0), self.OnPrintButton)
 		self.printButton.setDisabled(True)
-
-		#test radiobutton -> frame
-		# self.radioForm = openglGui.glFrame(self, (0, -3))
-		# openglGui.glGuiLayoutGrid(self.radioForm)
-		# group = []
-		# self.rotateToolButton = openglGui.glRadioButton(self.radioForm, 8, _("Rotate"), (0,1), group, self.OnToolSelect)
-		# self.scaleToolButton  = openglGui.glRadioButton(self.radioForm, 9, _("Scale"), (0,2), group, self.OnToolSelect)
-		# self.mirrorToolButton  = openglGui.glRadioButton(self.radioForm, 10, _("Mirror"), (0,3), group, self.OnToolSelect)
+		
 		group = []
 		self.rotateToolButton = openglGui.glRadioButton(self, 8, _("Rotate"), (0-1,-1-3.5), group, self.OnToolSelect)
 		self.scaleToolButton  = openglGui.glRadioButton(self, 9, _("Scale"), (0-1,-1-2.5), group, self.OnToolSelect)
@@ -138,7 +130,7 @@ class SceneView(openglGui.glGuiPanel):
 		openglGui.glLabel(self.scaleForm, _("Uniform scale"), (0,8))
 		self.scaleUniform = openglGui.glCheckbox(self.scaleForm, True, (1,8), None)
 
-		self.viewSelection = openglGui.glComboButton(self, _("View mode"), [7,19,11,15,23], [_("Normal"), _("Overhang"), _("Transparent"), _("X-Ray"), _("Layers")], (-1,0), self.OnViewChange)
+		self.viewSelection = openglGui.glComboButton(self, _("View mode"), [7,19,11,15,23], [_("Normal"), _("Overhang"), _("Transparent"), _("X-Ray"), _("Layers")], (-1,-5.5), self.OnViewChange)
 
 		self.youMagineButton = openglGui.glButton(self, 26, _("Share on YouMagine"), (2+100,0), lambda button: youmagineGui.youmagineManager(self.GetTopLevelParent(), self._scene))
 		self.youMagineButton.setDisabled(True)
