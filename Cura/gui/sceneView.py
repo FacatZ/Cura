@@ -62,7 +62,7 @@ class SceneView(openglGui.glGuiPanel):
 		self._projMatrix = None
 		self.tempMatrix = None
 
-
+		# self.SetColor('Green')
 		self.openFileButton      = openglGui.glButton(self, 4, _("Load"), (0+100,0), self.showLoadModel)
 		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1+100,0), self.OnPrintButton)
 		self.printButton.setDisabled(True)
@@ -1470,9 +1470,11 @@ class SceneView(openglGui.glGuiPanel):
 		for n in xrange(0, len(polys[0])):
 			if not circular:
 				if n % 2 == 0:
-					glColor4ub(5, 171, 231, 96)
+					# glColor4ub(5, 171, 231, 96)
+					glColor4ub(192, 218, 105, 96)
 				else:
-					glColor4ub(5, 171, 231, 64)
+					# glColor4ub(5, 171, 231, 64)
+					glColor4ub(192, 218, 105, 64)
 			else:
 				glColor4ub(5, 171, 231, 96)
 
@@ -1483,7 +1485,8 @@ class SceneView(openglGui.glGuiPanel):
 		glEnd()
 
 		#Draw top of build volume.
-		glColor4ub(5, 171, 231, 128)
+		# glColor4ub(5, 171, 231, 128)
+		glColor4ub(192, 218, 105, 128)
 		glBegin(GL_TRIANGLE_FAN)
 		for p in polys[0][::-1]:
 			glVertex3f(p[0], p[1], height)

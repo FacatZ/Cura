@@ -1,3 +1,4 @@
+#coding=utf-8
 __copyright__ = "Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License"
 
 import wx
@@ -5,7 +6,6 @@ import os
 import webbrowser
 import sys
 
-#import custom panel
 from Cura.gui import customModel
 from Cura.gui import configBase
 from Cura.gui import expertConfig
@@ -23,6 +23,7 @@ from Cura.gui.tools import pidDebugger
 from Cura.gui.tools import minecraftImport
 from Cura.util import profile
 from Cura.util import version
+from Cura.util import resources
 import platform
 from Cura.util import meshLoader
 
@@ -215,6 +216,13 @@ class mainWindow(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.OnAbout, i)
 		self.menubar.Append(helpMenu, _("Help"))
 		self.SetMenuBar(self.menubar)
+
+		#--------additional tool bar
+		self.toolbar = self.CreateToolBar(style=wx.TB_TEXT)
+		prtctrltool = self.toolbar.AddSimpleTool(-1, wx.Bitmap(resources.getPathForImage('anchor.png')), '打印机控制', '打印机控制')
+		virtualboardtool = self.toolbar.AddSimpleTool(-1, wx.Bitmap(resources.getPathForImage('application.png')), '虚拟键盘', '虚拟键盘')
+		wizardtool = self.toolbar.AddSimpleTool(-1, wx.Bitmap(resources.getPathForImage('calendar.png')), '使用向导', '使用向导')
+		self.toolbar.Realize()
 
 		self.splitter = wx.SplitterWindow(self, style = wx.SP_3D | wx.SP_LIVE_UPDATE)
 		self.leftPane = wx.Panel(self.splitter, style=wx.BORDER_NONE)
