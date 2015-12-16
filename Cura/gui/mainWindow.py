@@ -27,6 +27,8 @@ from Cura.util import resources
 import platform
 from Cura.util import meshLoader
 
+from Cura.util import imddata
+
 try:
 	#MacOS release currently lacks some wx components, like the Publisher.
 	from wx.lib.pubsub import Publisher
@@ -38,7 +40,6 @@ class mainWindow(wx.Frame):
 		super(mainWindow, self).__init__(None, title='Cura - ' + version.getVersion())
 
 		wx.EVT_CLOSE(self, self.OnClose)
-
 		# allow dropping any file, restrict later
 		self.SetDropTarget(dropTarget.FileDropTarget(self.OnDropFiles))
 
@@ -174,7 +175,7 @@ class mainWindow(wx.Frame):
 		i = expertMenu.Append(self.ID_QUICKPRINT, _("Switch to quickprint..."), kind=wx.ITEM_CHECK)
 		self.switchToQuickprintMenuItem = i
 		expertMenu.Check(self.ID_QUICKPRINT, False)
-		profile.putPreference('startMode', 'Normal')
+		# profile.putPreference('startMode', 'Normal')
 		self.Bind(wx.EVT_MENU, self.OnSimpleSwitch, i)
 
 		# i = expertMenu.Append(-1, _("Switch to full settings..."), kind=wx.ITEM_RADIO)

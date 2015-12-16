@@ -64,7 +64,7 @@ class SceneView(openglGui.glGuiPanel):
 
 		# self.SetColor('Green')
 		self.openFileButton      = openglGui.glButton(self, 4, _("Load"), (0+100,0), self.showLoadModel)
-		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1+100,0), self.OnPrintButton)
+		self.printButton         = openglGui.glButton(self, 6, _("Print"), (1,0), self.OnPrintButton)
 		self.printButton.setDisabled(True)
 		
 		group = []
@@ -87,33 +87,54 @@ class SceneView(openglGui.glGuiPanel):
 		self.mirrorToolButton.setExpandArrow(True)
 
 		# #add sidebar
-		self.button1 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -6), [], self.showLoadModel)
-		self.button2 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -5), [], self.showLoadModel)
-		self.button3 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -3), [], self.showLoadModel)
-		self.button4 = openglGui.glRadioButton(self, 8, _("unknown"), (0, -2), [], self.showLoadModel)
-		#orientation button & frame
-		self.orientationButton = openglGui.glRadioButton(self, 8, _("orientation"), (0, -4), [], self.OnToolSelect)
-		self.orientationFrame = openglGui.glFrame(self, (1.5, -2))
-		openglGui.glGuiLayoutGrid(self.orientationFrame)
-		openglGui.glLabel(self.orientationFrame, _("Orientation"), (0, 0))
-		openglGui.glLabel(self.orientationFrame, _("X"), (0, 1))
-		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 1), lambda value: self.OnScaleEntry(value, 0))
-		openglGui.glLabel(self.orientationFrame, _("Y"), (0, 2))
-		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 2), lambda value: self.OnScaleEntry(value, 0))
-		openglGui.glLabel(self.orientationFrame, _("Z"), (0, 3))
-		self.orXctrl = openglGui.glNumberCtrl(self.orientationFrame, '1.0', (1, 3), lambda value: self.OnScaleEntry(value, 0))
-		openglGui.glLabel(self.orientationFrame, _("lock"), (2, 1))
+		self.productTypeButton = openglGui.glRadioButton(self, 8, _("Product Type"), (0, -7), [], self.OnToolSelect)
+		self.importStandardButton = openglGui.glButton(self, 8, _("Import Standard"), (1, -7.4), self.OnImport)
+		self.importNonstandardButton = openglGui.glButton(self, 8, _("Import Nonstandard"), (1, -6.6), self.OnImport)
+
+		self.printModeButton = openglGui.glRadioButton(self, 8, _("Print Mode"), (0, -6), [], self.OnToolSelect)
+		self.expertModeButton = openglGui.glButton(self, 8, _("Expert Mode"), (1, -6.4), self.OnExpertMode)
+		self.simpleModeButton = openglGui.glButton(self, 8, _("Simple Mode"), (1, -5.6), self.OnSimpleMode)
 		
-		self.subbutton1 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (0,4), self.showLoadModel)
-		self.subbutton2 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (1,4), self.showLoadModel)
-		self.subbutton3 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (2,4), self.showLoadModel)
-		self.subbutton4 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (0,5), self.showLoadModel)
-		self.subbutton5 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (1,5), self.showLoadModel)
-		self.subbutton6 = openglGui.glButton(self.orientationFrame, 12, _("unknown"), (2,5), self.showLoadModel)
-		#unknown button
+		self.expertModeFrame = openglGui.glFrame(self, (1.1, -6))
+		openglGui.glGuiLayoutGrid(self.expertModeFrame)
+		self.highPrecision = openglGui.glLabelExt(self.expertModeFrame, 'High', (0,0), self.OnPrecisionSelect)
+		self.middlePrecision = openglGui.glLabelExt(self.expertModeFrame, 'Middle', (1, 0), self.OnPrecisionSelect)
+		self.lowPrecision = openglGui.glLabelExt(self.expertModeFrame, 'Low', (2, 0), self.OnPrecisionSelect)
+		self.highPrecision.setValue(True)
+
+		self.hasSupport = openglGui.glLabelExt(self.expertModeFrame, 'Yes', (0, 1), self.OnSupportSelect)
+		self.hasNoSupport = openglGui.glLabelExt(self.expertModeFrame, 'No', (2, 1), self.OnSupportSelect)
+		self.hasSupport.setValue(True)
+
+		openglGui.glLabelExt(self.expertModeFrame, '  -  ', (0, 2), self.OnDensityControl)
+		self.densityCtrl = openglGui.glNumberCtrl(self.expertModeFrame, '50', (1, 2), lambda value: self.OnDensityEntry(value))
+		openglGui.glLabelExt(self.expertModeFrame, '  +  ', (2, 2), self.OnDensityControl)
+		self.density = 50
+
+		self.materialButton = openglGui.glRadioButton(self, 8, _("Material"), (0, -5), [], self.OnToolSelect)
+
+		from Cura.util.imddata import imd
+		self.materialList = imd.getMachineList()
+		self.labelextList = []
+
+		self.materialListFrame = openglGui.glFrame(self, (1.1, -4.5))
+		openglGui.glGuiLayoutGrid(self.materialListFrame)
+
+		for i in range(len(self.materialList)):
+			material = self.materialList[i]			
+			labelext = openglGui.glLabelExt(self.materialListFrame, material, (0, i), self.OnMaterialSelect)
+			self.labelextList.append(labelext)
+			# chkbox = openglGui.glCheckbox(self.materialListFrame, True, (1, i), None)
+		self.labelextList[0].setValue(True)
+
+		self.sliceButton = openglGui.glRadioButton(self, 8, _("Slice"), (0, -4), [], self.OnSlice)
+
+		self.printerControl = openglGui.glRadioButton(self, 8, _("Printer Control"), (0, -3), [], self.PrinterControl)
+		#orientation button & frame
+		
 		# #end
 
-		self.scaleForm = openglGui.glFrame(self, (2-7, -2-0.5))
+		self.scaleForm = openglGui.glFrame(self, (2-7-1, -2-0.5))
 		openglGui.glGuiLayoutGrid(self.scaleForm)
 		openglGui.glLabel(self.scaleForm, _("Scale X"), (0,0))
 		self.scaleXctrl = openglGui.glNumberCtrl(self.scaleForm, '1.0', (1,0), lambda value: self.OnScaleEntry(value, 0))
@@ -149,7 +170,57 @@ class SceneView(openglGui.glGuiPanel):
 		self.updateToolButtons()
 		self.updateProfileToControls()
 
+	def OnDensityControl(self, label):
+		if label == '  +  ':
+			self.densityCtrl.setValue(str(self.density + 1))
+			self.OnDensityEntry(self.density + 1)
+		else:
+			self.densityCtrl.setValue(str(self.density - 1))
+			self.OnDensityEntry(self.density - 1)	
 
+	def OnDensityEntry(self, value):
+		self.density = int(value)
+
+	def OnSupportSelect(self, label='Yes'):
+		self.hasSupport.setValue(True if label == 'Yes' else False)
+		self.hasNoSupport.setValue(True if label == 'No' else False)
+
+
+	def OnPrecisionSelect(self, label='High'):
+		self.highPrecision.setValue(True if label == 'High' else False)
+		self.middlePrecision.setValue(True if label == 'Middle' else False)
+		self.lowPrecision.setValue(True if label == 'Low' else False)
+
+	def OnDown(self):
+		print 'OnDown method' 
+
+	def OnUp(self):
+		print 'OnUp method'
+
+	def OnSimpleMode(self, button=1):
+		print 'OnSimpleMode method'
+
+	def OnExpertMode(self, button=1):
+		print 'OnExpertMode method'
+		if self.printModeButton.getSelected():
+			self.expertModeButton.setHidden(True)
+			self.simpleModeButton.setHidden(True)
+			self.expertModeFrame.setHidden(False)
+
+	def OnMaterialSelect(self, label = ''):
+		for labelext in self.labelextList:
+			labelext.setValue(True if label == labelext.getLabel() else False)
+		if label == '':
+			self.labelextList[0].setValue(True)
+
+	def PrinterControl(self, button=1):
+		print 'PrinterControl method'
+
+	def OnSlice(self, button=1):
+		print 'OnSlice method'
+
+	def OnImport(self, button=1):
+		self.showLoadModel(button)
 
 	def loadGCodeFile(self, filename):
 		self.OnDeleteAll(None)
@@ -430,8 +501,8 @@ class SceneView(openglGui.glGuiPanel):
 			self.tool = previewTools.toolScale(self)
 		elif self.mirrorToolButton.getSelected():
 			self.tool = previewTools.toolNone(self)
-		elif self.orientationButton.getSelected():
-			print 'orient Button selected'
+		elif self.productTypeButton.getSelected():
+			print 'productTypeButton selected'
 		else:
 			self.tool = previewTools.toolNone(self)
 		self.resetRotationButton.setHidden(not self.rotateToolButton.getSelected())
@@ -442,8 +513,16 @@ class SceneView(openglGui.glGuiPanel):
 		self.mirrorXButton.setHidden(not self.mirrorToolButton.getSelected())
 		self.mirrorYButton.setHidden(not self.mirrorToolButton.getSelected())
 		self.mirrorZButton.setHidden(not self.mirrorToolButton.getSelected())
-		#additional orientation frame
-		self.orientationFrame.setHidden(not self.orientationButton.getSelected())
+
+		self.importStandardButton.setHidden(not self.productTypeButton.getSelected())
+		self.importNonstandardButton.setHidden(not self.productTypeButton.getSelected())
+
+		self.expertModeButton.setHidden(not self.printModeButton.getSelected())
+		self.simpleModeButton.setHidden(not self.printModeButton.getSelected())
+
+		self.expertModeFrame.setHidden(not self.expertModeButton.getSelected())
+
+		self.materialListFrame.setHidden(not self.materialButton.getSelected())
 
 	def updateToolButtons(self):
 		if self._selectedObj is None:
@@ -1476,7 +1555,8 @@ class SceneView(openglGui.glGuiPanel):
 					# glColor4ub(5, 171, 231, 64)
 					glColor4ub(192, 218, 105, 64)
 			else:
-				glColor4ub(5, 171, 231, 96)
+				# glColor4ub(5, 171, 231, 96)
+				glColor4ub(192, 218, 105, 96)
 
 			glVertex3f(polys[0][n][0], polys[0][n][1], height)
 			glVertex3f(polys[0][n][0], polys[0][n][1], 0)
@@ -1494,7 +1574,7 @@ class SceneView(openglGui.glGuiPanel):
 
 		#Draw checkerboard
 		if self._platformTexture is None:
-			self._platformTexture = openglHelpers.loadGLTexture('checkerboard.png')
+			self._platformTexture = openglHelpers.loadGLTexture('test.png')
 			glBindTexture(GL_TEXTURE_2D, self._platformTexture)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)

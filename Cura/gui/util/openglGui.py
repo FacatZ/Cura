@@ -15,6 +15,12 @@ from OpenGL.GL import *
 from Cura.util import version
 from Cura.gui.util import openglHelpers
 
+#test
+class TestItem(object):
+	isLoad = False
+
+showSTH = False
+
 class animation(object):
 	def __init__(self, gui, start, end, runTime):
 		self._start = start
@@ -260,7 +266,7 @@ class glGuiPanel(glcanvas.GLCanvas):
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		glDisable(GL_LIGHTING)
 		glColor4ub(255,255,255,255)
-
+		# glColor4ub(192, 219, 105, 90)
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 		size = self.GetSize()
@@ -467,7 +473,7 @@ class glButton(glGuiControl):
 		elif self._focus:
 			scale = 0.9
 		if self._disabled:
-			glColor4ub(128,128,128,128)
+			glColor4ub(128,128,128,128) 
 		else:
 			glColor4ub(255,255,255,255)
 		openglHelpers.glDrawTexturedQuad(pos[0]-bs*scale/2, pos[1]-bs*scale/2, bs*scale, bs*scale, 0)
@@ -529,6 +535,7 @@ class glButton(glGuiControl):
 				openglHelpers.glDrawStringCenter(line)
 				glTranslatef(0, 18, 0)
 			glPopMatrix()
+
 
 	def _checkHit(self, x, y):
 		if self._hidden or self._disabled:
@@ -598,11 +605,13 @@ class glComboButton(glButton):
 			return
 
 		glPushMatrix()
-		glTranslatef(pos[0]+bs*0.5, pos[1] + bs*0.5, 0)
+		#glTranslatef(pos[0]+bs*0.5, pos[1] + bs*0.5, 0)
+		glTranslatef(pos[0] - bs*1.8, pos[1] - bs*2, 0)
 		glBindTexture(GL_TEXTURE_2D, self._base._glButtonsTexture)
 		for n in xrange(0, len(self._imageIDs)):
 			glTranslatef(0, bs, 0)
 			glColor4ub(255,255,255,255)
+			# glColor4ub(40, 70, 60, 100)
 			openglHelpers.glDrawTexturedQuad(-0.5*bs,-0.5*bs,bs,bs, 0)
 			openglHelpers.glDrawTexturedQuad(-0.5*bs,-0.5*bs,bs,bs, self._imageIDs[n])
 			glDisable(GL_TEXTURE_2D)
@@ -612,6 +621,7 @@ class glComboButton(glButton):
 
 			glPushMatrix()
 			glColor4ub(60,60,60,255)
+			# glColor4ub(40, 70, 60, 100)
 			glTranslatef(-1, -1, 0)
 			openglHelpers.glDrawStringRight(self._tooltips[n])
 			glTranslatef(0, 2, 0)
@@ -623,6 +633,7 @@ class glComboButton(glButton):
 			glPopMatrix()
 
 			glColor4ub(255,255,255,255)
+			# glColor4ub(40, 70, 60, 100)
 			openglHelpers.glDrawStringRight(self._tooltips[n])
 			glPopMatrix()
 		glPopMatrix()
@@ -684,6 +695,7 @@ class glFrame(glGuiContainer):
 
 		size = self._layout.getLayoutSize()
 		glColor4ub(255,255,255,255)
+		# glColor4ub(40, 70, 60, 100)
 		openglHelpers.glDrawStretchedQuad(pos[0], pos[1], size[0], size[1], bs*0.75, 0)
 		#Draw the controls on the frame
 		super(glFrame, self).draw()
@@ -776,17 +788,17 @@ class glLabel(glGuiControl):
 		glPushMatrix()
 		glTranslatef(x, y, 0)
 
-#		glColor4ub(255,255,255,128)
-#		glBegin(GL_QUADS)
-#		glTexCoord2f(1, 0)
-#		glVertex2f( w, 0)
-#		glTexCoord2f(0, 0)
-#		glVertex2f( 0, 0)
-#		glTexCoord2f(0, 1)
-#		glVertex2f( 0, h)
-#		glTexCoord2f(1, 1)
-#		glVertex2f( w, h)
-#		glEnd()
+		# glColor4ub(255,255,255,128)
+		# glBegin(GL_QUADS)
+		# glTexCoord2f(1, 0)
+		# glVertex2f( w, 0)
+		# glTexCoord2f(0, 0)
+		# glVertex2f( 0, 0)
+		# glTexCoord2f(0, 1)
+		# glVertex2f( 0, h)
+		# glTexCoord2f(1, 1)
+		# glVertex2f( w, h)
+		# glEnd()
 
 		glTranslate(5, h - 5, 0)
 		glColor4ub(255,255,255,255)
@@ -1091,5 +1103,57 @@ class glSlider(glGuiControl):
 	def OnMouseUp(self, x, y):
 		if self.hasFocus():
 			self._base._focus = None
+			return True
+		return False
+
+
+class glLabelExt(glLabel):
+	def __init__(self, parent, label, pos, callback = None):
+		self._label = label
+		super(glLabel, self).__init__(parent, pos)
+		self._value = False
+		self._callback = callback
+
+	def setValue(self, value):
+		self._value = value
+
+	def getLabel(self):
+		return self._label
+
+	def draw(self):
+		x, y, w, h = self.getSize()
+
+		glPushMatrix()
+		glTranslatef(x, y, 0)
+
+		if self._value:
+			glColor4ub(255,255,255,128)
+			glBegin(GL_QUADS)
+			glTexCoord2f(1, 0)
+			glVertex2f( w, 0)
+			glTexCoord2f(0, 0)
+			glVertex2f( 0, 0)
+			glTexCoord2f(0, 1)
+			glVertex2f( 0, h)
+			glTexCoord2f(1, 1)
+			glVertex2f( w, h)
+			glEnd()
+
+		glTranslate(5, h - 5, 0)
+		glColor4ub(255,255,255,255)
+		openglHelpers.glDrawStringLeft(self._label)
+		glPopMatrix()
+
+	def _checkHit(self, x, y):
+		x1, y1, w, h = self.getSize()
+		return 0<=x-x1<=w and 0<=y-y1<=h
+
+	def OnMouseMotion(self, x, y):
+		return False
+
+	def OnMouseDown(self, x, y, button):
+		if self._checkHit(x, y):
+			if self._callback is not None:
+				self._callback(label=self._label)
 			return True
 		return False
